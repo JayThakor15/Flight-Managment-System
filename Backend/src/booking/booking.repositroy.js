@@ -6,8 +6,7 @@ export default class BookingRepository {
   async createBooking(data) {
     // const session = await Booking.startSession();
     try {
-      console.log(data, "data in booking repository");
-
+      
       const booking = new Booking(data);
 
       //Decrease seat availability in flight

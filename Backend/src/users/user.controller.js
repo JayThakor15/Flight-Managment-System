@@ -125,10 +125,12 @@ export default class UserController {
       if (!updatedProfilePic) {
         return next(new ApplicationError("Profile pic is required", 400));
       }
+      // Hash the password correctly
+      const hashedPassword = await bcrypt.hash(password, 12);
       const updateInfo = {
         name,
         email,
-        password,
+        password: hashedPassword,
         type: role,
         gender,
         profilePicture: updatedProfilePic,

@@ -1,16 +1,17 @@
 import { ApplicationError } from "../../config/ApplicationError.js";
 import BookingRepository from "./booking.repositroy.js";
 import { FlightRepository } from "../flight/flight.repository.js";
+import emailService from "../email/email.service.js";
 
 export default class BookingController {
   constructor() {
     this.bookingRepo = new BookingRepository();
     this.flightRepo = new FlightRepository();
+    this.emailSvc = new emailService();
   }
   async createBooking(req, res, next) {
     try {
       const { flightId, passenger } = req.body;
-      console.log(req.body, "req body in booking");
 
       if (!flightId || !passenger || !Array.isArray(passenger)) {
         throw new ApplicationError("Invalid booking data", 400);
@@ -33,6 +34,13 @@ export default class BookingController {
       if (!booking) {
         throw new ApplicationError("Booking creation failed", 500);
       }
+      if (booking) {
+        this.emailSvc.sendEmail(
+          req.user.email,
+          "Booking Confirmed",
+          `Your booking for flight ${flight.flightNumber} is confirmed. Total Price: $${totalPrice}`
+        );
+      }
       res.status(201).json({
         status: "success",
         message: "Booking created successfully",
@@ -54,6 +62,11 @@ export default class BookingController {
       if (!booking) {
         throw new ApplicationError("Booking cancellation failed", 500);
       }
+      this.emailSvc.sendEmail(
+        req.user.email,
+        "Booking Cancelled",
+        `Your booking for flight ${booking.flight.flightNumber} has been cancelled.`
+      );
       res.status(200).json({
         status: "success",
         message: "Booking cancelled successfully",

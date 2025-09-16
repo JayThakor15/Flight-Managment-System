@@ -34,9 +34,9 @@ export class FlightRepository {
       throw new ApplicationError("Failed to filter flights", error);
     }
   }
-  async filterFlights(filters) {
+  async filterFlights(filters, skip, limit) {
     try {
-      const flights = await flightSchema.find(filters);
+      const flights = await flightSchema.find(filters).skip(skip).limit(limit);
       return flights;
     } catch (error) {
       throw new ApplicationError("Failed to filter flights", error);

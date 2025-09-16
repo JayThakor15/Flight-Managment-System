@@ -86,8 +86,15 @@ export class FlightController {
   }
   async filterFlights(req, res, next) {
     try {
-      const { departureCity, arrivalCity, departureDate, flightClass } =
-        req.query;
+      // implement pagination here
+      const {
+        departureCity,
+        arrivalCity,
+        departureDate,
+        flightClass,
+        page = 1,
+        limit = 3,
+      } = req.query;
       const filters = {};
       if (departureCity)
         filters.departureCity = { $regex: departureCity, $options: "i" }; //regex for case insensitive like if user types "new" it should match "New York"
@@ -95,7 +102,9 @@ export class FlightController {
         filters.arrivalCity = { $regex: arrivalCity, $options: "i" };
       if (departureDate) filters.departureDate = new Date(departureDate);
       if (flightClass) filters.flightClass = flightClass;
-      const flights = await this.flightRepo.filterFlights(filters);
+
+      const skip = (page - 1) * limit;
+      const flights = await this.flightRepo.filterFlights(filters, skip, limit);
       return res.status(200).json({
         status: true,
         flights,
