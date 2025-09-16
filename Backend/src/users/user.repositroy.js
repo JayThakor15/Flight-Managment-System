@@ -55,11 +55,13 @@ export default class userRepository {
 
   async updateProfile(userId, updateInfo) {
     try {
-      const updatedUser = await userSchema.findByIdAndUpdate(
-        userId,
-        updateInfo,
-        { new: true } // Return the updated document
-      );
+      const updatedUser = await userSchema
+        .findByIdAndUpdate(
+          userId,
+          updateInfo,
+          { new: true } // Return the updated document
+        )
+        .select("-password");
       return updatedUser;
     } catch (error) {
       console.log(error);

@@ -75,7 +75,11 @@ export default class UserController {
 
       // Generate JWT token
       const token = jwt.sign(
-        { userId: registeredUser._id, email: registeredUser.email },
+        {
+          userId: registeredUser._id,
+          email: registeredUser.email,
+          role: registeredUser.type,
+        },
         process.env.JWT_SECRET,
         { expiresIn: "1d" }
       );
@@ -113,7 +117,7 @@ export default class UserController {
   async updateProfile(req, res, next) {
     try {
       const userId = req.user.userId;
-      const { name, email, role, gender } = req.body;
+      const { name, email, password, role, gender } = req.body;
       if (!name || !email || !role || !gender) {
         return next(new ApplicationError("All fields are required", 400));
       }
@@ -124,6 +128,7 @@ export default class UserController {
       const updateInfo = {
         name,
         email,
+        password,
         type: role,
         gender,
         profilePicture: updatedProfilePic,
@@ -132,7 +137,7 @@ export default class UserController {
       if (!updatedUser) {
         return next(new ApplicationError("User not found", 404));
       }
-      return res.status(200).json({ 
+      return res.status(200).json({
         status: true,
         message: "Profile updated successfully",
         updatedUser,

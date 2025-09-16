@@ -3,8 +3,9 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import cors from "cors";
 import { ApplicationError } from "./config/ApplicationError.js";
-import userRoutes from "../src/users/user.routes.js";
-import flightRoutes from "../src/flight/flight.routes.js";
+import userRoutes from "./src/users/user.routes.js";
+import flightRoutes from "./src/flight/flight.routes.js";
+import bookingRoutes from "./src/booking/booking.route.js";
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -17,6 +18,7 @@ const PORT = process.env.PORT || 5000;
 // user routes
 app.use("/api/users", userRoutes);
 app.use("/api/flights", flightRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 app.use((err, req, res, next) => {
   //   console.error(err.stack);
